@@ -36,17 +36,17 @@ func Build(conf config.Config) error {
 	libdirs, err := getDirectories(conf.Source.Libraries)
 	if err != nil { return err }
 
-	files, err := getDirectories(conf.Source.Endpoints)
+	files, err := getDirectories(conf.Source.Images)
 	if err != nil { return err }
 
 	for _, file := range files {
-		contents, err := ioutil.ReadDir(conf.Source.Endpoints + "/" + file)
+		contents, err := ioutil.ReadDir(conf.Source.Images + "/" + file)
 		if (err != nil) { return err }
 
 		moduleName := findModule(contents)
-		if (moduleName == "") { return errors.New("Folder " + file + " in " + conf.Source.Endpoints + " does not contain a go module") }
+		if (moduleName == "") { return errors.New("Folder " + file + " in " + conf.Source.Images + " does not contain a go module") }
 
-		err = buildImage(cli, conf.Source.Endpoints + "/" + file, conf.Registry + "/" + file + ":0.0.1", getGoDockerfile(libdirs, conf.Registry))
+		err = buildImage(cli, conf.Source.Images + "/" + file, conf.Registry + "/" + file + ":0.0.1", getGoDockerfile(libdirs, conf.Registry))
 		if err != nil { return err }
 	} 
 

@@ -11,7 +11,7 @@ import (
 
 type Source struct {
 	Libraries string
-	Endpoints string
+	Images string
 }
 
 type Image struct {
