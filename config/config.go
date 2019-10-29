@@ -19,6 +19,12 @@ type Image struct {
 	Tag  string
 }
 
+type InitTask struct {
+	Name string
+	Image Image
+	Environment []EnvironmentVariable
+}
+
 type Endpoint struct {
 	Path  string
 	Image Image
@@ -39,6 +45,7 @@ type Config struct {
 	Registry    string
 	Source 			Source
 	Services    []string
+	Init        []InitTask
 	Routes      []Route
 	Environment []EnvironmentVariable
 }

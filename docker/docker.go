@@ -107,8 +107,6 @@ func buildImage(cli *client.Client, sourceLocation string, name string, dockerfi
 }
 
 func makeArchive(directory string, dockerfile string) {
-	os.MkdirAll("testdir",0755)
-
 	tar := new(archivex.TarFile)
 	tar.Create(TMP_FILE)
 	tar.AddAll(directory, false)
@@ -137,6 +135,13 @@ func TestRun(service string, conf config.Config) error {
 			if err != nil {
 				return err
 			}
+		}
+	}
+
+	for _, initTask := range conf.Init {
+		err = createInitContainer(cli, networkId, conf, initTask)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -189,6 +194,61 @@ func createMongoContainer(cli *client.Client, networkId string) error {
 		[]string{ "mongo0.mongo" },
 		[]string{},
 		"gnative-mongo", 
+	)
+}
+
+func createInitContainer(cli *client.Client, networkId string, conf config.Config, initTask config.InitTask) error {
+	ctx := context.Background()
+	env := []string{}
+
+	for _, envVar := range conf.Environment {
+		env = append(env, envVar.Name + "=" + envVar.Value)
+	}
+
+	for _, envVar := range initTask.Environment {
+		env = append(env, envVar.Name + "=" + envVar.Value)
+	}
+
+	config := container.Config{
+		Image: conf.Registry + "/" + initTask.Image.Name + ":" + initTask.Image.Tag,
+		Env: env,
+	}
+
+	log.Print("Creating init container " + initTask.Name)
+
+	res, err := cli.ContainerCreate(
+		ctx,
+		&config,
+		nil,
+		nil,
+		"gnative-init-" + initTask.Name,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if len(res.Warnings) > 0 {
+		return errors.New(strings.Join(res.Warnings, ","))
+	}
+
+	containerId := res.ID
+
+	err = cli.ContainerStart(
+		ctx,
+		containerId,
+		types.ContainerStartOptions{},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return cli.NetworkConnect(
+		ctx,
+		networkId,
+		containerId,
+		nil,
 	)
 }
 
