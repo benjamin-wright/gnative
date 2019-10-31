@@ -44,7 +44,7 @@ COPY --from=builder /go/bin/app /go/bin/app
 ENTRYPOINT ["/go/bin/app"]
 `)
 
-  if err != nil {
+  	if err != nil {
 		panic(err)
 	}
 

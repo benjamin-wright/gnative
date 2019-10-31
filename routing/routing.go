@@ -10,30 +10,30 @@ import (
 
 func Write(c config.Config) {
 	for _, route := range c.Routes {
-		routeToServiceYaml(route)
-		routeToDeploymentsYaml(c.Registry, route, c.Environment)
+		routeToVirtualServiceYaml(route)
+		routeToServingYaml(c.Registry, route, c.Environment)
 	}
 }
 
-func routeToDeploymentsYaml(registry string, route config.Route, env []config.EnvironmentVariable) {
+func routeToServingYaml(registry string, route config.Route, env []config.EnvironmentVariable) {
 	for _, endpoint := range route.Endpoints {
-		deployment := getBaseDeployment(registry, endpoint, env)
+		serving := getBaseServing(registry, endpoint, env)
 
-		d, err := yaml.Marshal(&deployment)
+		d, err := yaml.Marshal(&serving)
 		if err != nil {
 			panic(err)
 		}
 
-		err = ioutil.WriteFile("manifests/"+route.Name+"_deployment_"+deployment.Metadata.Name+".yaml", d, 0644)
+		err = ioutil.WriteFile("manifests/"+route.Name+"_deployment_"+serving.Metadata.Name+".yaml", d, 0644)
 		if err != nil {
 			panic(err)
 		}
 
-		log.Print("Written " + route.Name + " deployment " + deployment.Metadata.Name)
+		log.Print("Written " + route.Name + " deployment " + serving.Metadata.Name)
 	}
 }
 
-func routeToServiceYaml(route config.Route) {
+func routeToVirtualServiceYaml(route config.Route) {
 	service := getBaseService(route)
 
 	for _, endpoint := range route.Endpoints {

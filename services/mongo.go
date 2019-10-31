@@ -54,6 +54,6 @@ spec:
   - port: 27017
     targetPort: 27017
   selector:
-    role: mongo`,
+    name: mongo`,
 	}
 }

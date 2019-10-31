@@ -4,6 +4,7 @@ import (
 	"gnative/config"
 	"gnative/routing"
 	"gnative/services"
+	"gnative/tasks"
 	"gnative/docker"
 	"log"
 	"os"
@@ -60,6 +61,7 @@ func template(c *cli.Context) error {
 
 	routing.Write(conf)
 	services.Write(conf.Services)
+	tasks.Write(conf)
 
 	return nil
 }
