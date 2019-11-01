@@ -14,6 +14,8 @@ import (
 
 func main() {
 	app := cli.NewApp()
+	app.Name = "GNative"
+	app.Usage = "Create GoLang-based KNative applications with ease"
 
 	app.Commands = []cli.Command{
 		{
