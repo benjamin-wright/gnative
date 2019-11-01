@@ -10,6 +10,10 @@ func Write(namespace string, serviceNames []string) {
 		if service == "mongo" {
 			writeMongoOutputs(namespace)
 		}
+		
+		if service == "redis" {
+			writeRedisOutputs(namespace)
+		}
 	}
 }
 
@@ -19,3 +23,11 @@ func writeMongoOutputs(namespace string) {
 		log.Print("Written manifest " + output.file)
 	}
 }
+
+func writeRedisOutputs(namespace string) {
+	for _, output := range getRedisOutputs(namespace) {
+		ioutil.WriteFile("manifests/"+output.file, []byte(output.data), 0644)
+		log.Print("Written manifest " + output.file)
+	}
+}
+

@@ -136,6 +136,12 @@ func TestRun(service string, conf config.Config) error {
 				return err
 			}
 		}
+		if service == "redis" {
+			err = createRedisContainer(cli, networkId)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	for _, initTask := range conf.Init {
@@ -173,11 +179,31 @@ func createTestNetwork(cli *client.Client) (string, error) {
 	return res.ID, nil
 }
 
+func createRedisContainer(cli *client.Client, networkId string) error {
+	return createServiceContainer(
+		cli,
+		networkId,
+		"redis",
+		"6379",
+		"redis",
+	)
+}
+
 func createMongoContainer(cli *client.Client, networkId string) error {
-	log.Print("Updating mongo image")
+	return createServiceContainer(
+		cli,
+		networkId,
+		"mongo",
+		"27017",
+		"mongo",
+	)
+}
+
+func createServiceContainer(cli *client.Client, networkId string, image string, port string, alias string) error {
+	log.Print("Updating " + image + " image")
 	r, err := cli.ImagePull(
 		context.Background(),
-		"docker.io/library/mongo",
+		"docker.io/library/" + image,
 		types.ImagePullOptions{},
 	)
 	if err != nil {
@@ -189,11 +215,11 @@ func createMongoContainer(cli *client.Client, networkId string) error {
 	return createContainer(
 		cli,
 		networkId,
-		"mongo",
-		"27017",
-		[]string{ "mongo" },
+		image,
+		port,
+		[]string{ alias },
 		[]string{},
-		"gnative-mongo", 
+		"gnative-" + image, 
 	)
 }
 
