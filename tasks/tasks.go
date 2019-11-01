@@ -11,7 +11,7 @@ import (
 
 func Write(c config.Config) {
 	for _, task := range c.Init {
-		job := taskToJob(c.Registry, task, c.Environment)
+		job := taskToJob(c.Namespace, c.Registry, task, c.Environment)
 		d, err := yaml.Marshal(&job)
 		if err != nil {
 			panic(err)

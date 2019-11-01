@@ -4,13 +4,13 @@ import (
 	"gnative/config"
 )
 
-func getBaseService(route config.Route) VirtualService {
+func getBaseService(namespace string, route config.Route) VirtualService {
 	return VirtualService{
 		ApiVersion: "networking.istio.io/v1alpha3",
 		Kind:       "VirtualService",
 		Metadata: Metadata{
 			Name:      route.Name,
-			Namespace: "default",
+			Namespace: namespace,
 		},
 		Spec: VirtualServiceSpec{
 			Gateways: []string{"knative-ingress-gateway.knative-serving.svc.cluster.local"},
@@ -19,7 +19,7 @@ func getBaseService(route config.Route) VirtualService {
 	}
 }
 
-func getHttp(endpoint config.Endpoint) Http {
+func getHttp(namespace string, endpoint config.Endpoint) Http {
 	return Http{
 		Match: []MatchRule{
 			{
@@ -29,7 +29,7 @@ func getHttp(endpoint config.Endpoint) Http {
 			},
 		},
 		Rewrite: RewriteRule{
-			Authority: endpoint.Image.Name + ".default.example.com",
+			Authority: endpoint.Image.Name + "." + namespace + ".example.com",
 		},
 		Route: []Route{
 			{

@@ -10,14 +10,14 @@ import (
 
 func Write(c config.Config) {
 	for _, route := range c.Routes {
-		routeToVirtualServiceYaml(route)
-		routeToServingYaml(c.Registry, route, c.Environment)
+		routeToVirtualServiceYaml(c.Namespace, route)
+		routeToServingYaml(c.Namespace, c.Registry, route, c.Environment)
 	}
 }
 
-func routeToServingYaml(registry string, route config.Route, env []config.EnvironmentVariable) {
+func routeToServingYaml(namespace string, registry string, route config.Route, env []config.EnvironmentVariable) {
 	for _, endpoint := range route.Endpoints {
-		serving := getBaseServing(registry, endpoint, env)
+		serving := getBaseServing(namespace, registry, endpoint, env)
 
 		d, err := yaml.Marshal(&serving)
 		if err != nil {
@@ -33,11 +33,11 @@ func routeToServingYaml(registry string, route config.Route, env []config.Enviro
 	}
 }
 
-func routeToVirtualServiceYaml(route config.Route) {
-	service := getBaseService(route)
+func routeToVirtualServiceYaml(namespace string, route config.Route) {
+	service := getBaseService(namespace, route)
 
 	for _, endpoint := range route.Endpoints {
-		service.Spec.Http = append(service.Spec.Http, getHttp(endpoint))
+		service.Spec.Http = append(service.Spec.Http, getHttp(namespace, endpoint))
 	}
 
 	d, err := yaml.Marshal(&service)

@@ -4,7 +4,7 @@ import (
 	"gnative/config"
 )
 
-func getBaseServing(registry string, endpoint config.Endpoint, env []config.EnvironmentVariable) Service {
+func getBaseServing(namespace string, registry string, endpoint config.Endpoint, env []config.EnvironmentVariable) Service {
 	envVars := []EnvironmentVariable{}
 
 	for _, e := range env {
@@ -19,7 +19,7 @@ func getBaseServing(registry string, endpoint config.Endpoint, env []config.Envi
 		Kind:       "Service",
 		Metadata: Metadata{
 			Name:      endpoint.Image.Name,
-			Namespace: "default",
+			Namespace: namespace,
 		},
 		Spec: ServiceSpec{
 			Template: ServiceTemplate{

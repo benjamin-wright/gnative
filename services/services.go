@@ -5,16 +5,16 @@ import (
 	"log"
 )
 
-func Write(serviceNames []string) {
+func Write(namespace string, serviceNames []string) {
 	for _, service := range serviceNames {
 		if service == "mongo" {
-			writeMongoOutputs()
+			writeMongoOutputs(namespace)
 		}
 	}
 }
 
-func writeMongoOutputs() {
-	for _, output := range getMongoOutputs() {
+func writeMongoOutputs(namespace string) {
+	for _, output := range getMongoOutputs(namespace) {
 		ioutil.WriteFile("manifests/"+output.file, []byte(output.data), 0644)
 		log.Print("Written manifest " + output.file)
 	}

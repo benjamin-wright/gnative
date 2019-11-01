@@ -1,27 +1,31 @@
 package services
 
+import (
+	"bytes"
+	"text/template"
+)
+
 type serviceFile struct {
 	file string
 	data string
 }
 
-func getMongoOutputs() []serviceFile {
+func getMongoOutputs(namespace string) []serviceFile {
 	outputs := []serviceFile{}
 
-	outputs = append(outputs, getMongoDeployment())
-	outputs = append(outputs, getMongoService())
+	outputs = append(outputs, getMongoDeployment(namespace))
+	outputs = append(outputs, getMongoService(namespace))
 
 	return outputs
 }
 
-func getMongoDeployment() serviceFile {
-	return serviceFile{
-		file: "mongo-deployment.yaml",
-		data: `
+func getMongoDeployment(namespace string) serviceFile {
+	tmpl, err := template.New("mongoDeployment").Parse(`
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: mongo
+  namespace: {{ . }}
 spec:
   serviceName: "mongo"
   replicas: 1
@@ -35,18 +39,33 @@ spec:
       - name: mongo
         image: mongo
         ports:
-        - containerPort: 27017`,
+        - containerPort: 27017
+`)
+
+  if err != nil {
+		panic(err)
+	}
+
+	var data bytes.Buffer
+	err = tmpl.Execute(&data, namespace)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return serviceFile{
+		file: "mongo-deployment.yaml",
+		data: data.String(),
 	}
 }
 
-func getMongoService() serviceFile {
-	return serviceFile{
-		file: "mongo-service.yaml",
-		data: `
+func getMongoService(namespace string) serviceFile {
+  tmpl, err := template.New("mongoDeployment").Parse(`
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo
+  namespace: {{ . }}
   labels:
     name: mongo
 spec:
@@ -54,6 +73,22 @@ spec:
   - port: 27017
     targetPort: 27017
   selector:
-    name: mongo`,
+    name: mongo
+  `)
+  
+    if err != nil {
+      panic(err)
+    }
+  
+    var data bytes.Buffer
+    err = tmpl.Execute(&data, namespace)
+  
+    if err != nil {
+      panic(err)
+    }
+
+	return serviceFile{
+		file: "mongo-service.yaml",
+		data: data.String(),
 	}
 }

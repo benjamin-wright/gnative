@@ -4,7 +4,7 @@ import (
 	"gnative/config"
 )
 
-func taskToJob(registry string, task config.InitTask, globalEnv []config.EnvironmentVariable) Job {
+func taskToJob(namespace string, registry string, task config.InitTask, globalEnv []config.EnvironmentVariable) Job {
 	envVars := []EnvironmentVariable{}
 
 	for _, env := range task.Environment {
@@ -26,7 +26,7 @@ func taskToJob(registry string, task config.InitTask, globalEnv []config.Environ
 		Kind: "Job",
 		Metadata: Metadata{
 			Name: task.Name,
-			Namespace: "default",
+			Namespace: namespace,
 		},
 		Spec: JobSpec{
 			Template: JobTemplate{

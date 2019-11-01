@@ -43,7 +43,8 @@ type EnvironmentVariable struct {
 
 type Config struct {
 	Registry    string
-	Source 			Source
+	Namespace   string
+	Source 		Source
 	Services    []string
 	Init        []InitTask
 	Routes      []Route

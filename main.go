@@ -60,7 +60,7 @@ func template(c *cli.Context) error {
 	os.Mkdir("manifests", 0777)
 
 	routing.Write(conf)
-	services.Write(conf.Services)
+	services.Write(conf.Namespace, conf.Services)
 	tasks.Write(conf)
 
 	return nil
