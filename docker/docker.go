@@ -191,7 +191,7 @@ func createMongoContainer(cli *client.Client, networkId string) error {
 		networkId,
 		"mongo",
 		"27017",
-		[]string{ "mongo.default.svc.cluster.local" },
+		[]string{ "mongo" },
 		[]string{},
 		"gnative-mongo", 
 	)
