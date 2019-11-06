@@ -26,8 +26,9 @@ type InitTask struct {
 }
 
 type Endpoint struct {
-	Path  string
-	Image Image
+	Path   string
+	Method string
+	Image  Image
 }
 
 type Route struct {

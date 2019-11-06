@@ -26,6 +26,9 @@ func getHttp(namespace string, endpoint config.Endpoint) Http {
 				Uri: Uri{
 					Prefix: endpoint.Path,
 				},
+				Method: Method{
+					Exact: endpoint.Method,
+				},
 			},
 		},
 		Rewrite: RewriteRule{

@@ -61,10 +61,15 @@ type Http struct {
 
 type MatchRule struct {
 	Uri Uri `yaml:"uri"`
+	Method Method `yaml:"method"`
 }
 
 type Uri struct {
 	Prefix string `yaml:"prefix"`
+}
+
+type Method struct {
+	Exact string `yaml:"exact"`
 }
 
 type RewriteRule struct {
