@@ -377,7 +377,7 @@ func TestStop(conf config.Config) error {
 
 func stopTestContainers(cli *client.Client) error {
 	ctx := context.Background()
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{ All: true })
 	if err != nil {
 		return err
 	}
@@ -391,9 +391,11 @@ func stopTestContainers(cli *client.Client) error {
 
 		count = count + 1
 
-		err = cli.ContainerStop(ctx, container.ID, nil)
-		if err != nil {
-			return err
+		if (container.State == "running") {
+			err = cli.ContainerStop(ctx, container.ID, nil)
+			if err != nil {
+				return err
+			}
 		}
 
 		err = cli.ContainerRemove(ctx, container.ID, types.ContainerRemoveOptions{})
